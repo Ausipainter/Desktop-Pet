@@ -287,6 +287,8 @@ try:
 
     ###slime = Desktop_Pet(86,65,1,"Slime",10)
     llama = Desktop_Pet(1,"LLama", 6,100,100)
+    ##man = Desktop_Pet(1,"Man",4,100,100)
+    
 
     def check_click(mousepos):
         for pet in petList:
