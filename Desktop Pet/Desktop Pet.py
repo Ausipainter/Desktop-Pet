@@ -83,6 +83,9 @@ try:
             self.speed = speed
             self.current = 0
             self.walk_images = []
+            self.ground = HEIGHT - height
+            self.wallr = WIDTH - width
+            
             
             self.idle_images = []
             files = sorted(
@@ -142,32 +145,32 @@ try:
             
             if self.free:
                 if self.state == "none":
-                    if self.y < HEIGHT - 65:
+                    if self.y < self.ground:
                         self.y += self.vy
                         self.vy += 0.4
-                    elif self.y != HEIGHT - 65:
-                        self.y = HEIGHT - 65
+                    elif self.y != self.ground:
+                        self.y = self.ground
                         self.vy = 0
                     
-                    if self.x >= 0 and self.x < WIDTH - 86:
+                    if self.x >= 0 and self.x < self.wallr:
                         self.x += self.vx
-                    if self.x > WIDTH - 86:
-                        self.x = WIDTH - 86
+                    if self.x > self.wallr:
+                        self.x = self.wallr
                     if self.x < 0:
                         self.x = 0
                         
                     if self.vx > 0:
                         self.vx -= 0.01
-                        if self.y < HEIGHT - 65:
+                        if self.y < self.ground:
                             self.vx -= 0.1
                     elif self.vx < 0:
                         self.vx += 0.01
-                        if self.y < HEIGHT - 65:
+                        if self.y < self.ground:
                             self.vx += 0.1
                     else:
                         self.vx = 0
 
-                if self.y == HEIGHT-65:
+                if self.y == self.ground:
                     self.on_ground = True
 
                 else:
@@ -272,7 +275,8 @@ try:
        
     
 
-    slime = Desktop_Pet(86,65,1,"Slime",10)
+    ###slime = Desktop_Pet(86,65,1,"Slime",10)
+    llama = Desktop_Pet(48,48,1,"LLama", 6)
 
     def check_click(mousepos):
         for pet in petList:
