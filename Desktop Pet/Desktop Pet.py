@@ -50,7 +50,7 @@ top_thread = threading.Thread(target=keep_on_top, daemon=True)
 top_thread.start()
 
 petList = []
-STATES = ["none","jump","walkl","walkr"]
+STATES = ["none","jump","walkl","walkr","flip"]
  
 
 class Desktop_Pet():
@@ -91,7 +91,9 @@ class Desktop_Pet():
         self.walk_images = []
         self.ground = HEIGHT - self.height
         self.wallr = WIDTH - self.width
-        self.jump_state = 0 
+        self.jump_state = 0
+        self.original = self.sprite
+        self.rot = 0
         
         self.idle_images = []
         files = sorted(
@@ -273,6 +275,9 @@ class Desktop_Pet():
                 self.delay = True
                 self.current = 0
         elif self.state == "jump":
+            if self == cappy:
+                
+                self.sprite = pygame.transform.rotate(self.sprite,90)
             if self.jump_state == 0:
                 if random.randint(1,2) == 2:
                     self.vx = random.randint(1,20)
@@ -295,6 +300,9 @@ class Desktop_Pet():
                     self.delay_timer = 120
                     self.delay = True
                     self.current = 0
+               
+        
+            
 
 
             
