@@ -50,7 +50,7 @@ top_thread = threading.Thread(target=keep_on_top, daemon=True)
 top_thread.start()
 
 petList = []
-STATES = ["none","walkl","walkr","flip"]
+STATES = ["walkl","walkr"]
  
 
 class Desktop_Pet():
@@ -201,10 +201,12 @@ class Desktop_Pet():
                         new_state = random.randint(1, 1000)
                         if new_state < 101:
                             new_state = "jump"
+                            
                         else:
                             new_state = random.choice(STATES)
                         self.state = new_state
                         self.random = random.randint(1,1000)
+                        self.current = 0
                     
                 else:
                     self.delay_timer -= 1
@@ -329,8 +331,14 @@ class Desktop_Pet():
 
 
 #slime = Desktop_Pet(1,"Slime",10,100,100)
-cappy = Desktop_Pet(1,"CappyBara", 4, 100,100)
-llama = Desktop_Pet(1,"LLama", 6,100,100)
+try:
+    cappy = Desktop_Pet(1,"CappyBara", 4, 100,100)
+except:
+    pass
+try:
+    llama = Desktop_Pet(1,"LLama", 6,100,100)
+except:
+    pass
 ##man = Desktop_Pet(1,"Man",4,50,50)
 
 
@@ -339,6 +347,8 @@ def check_click(mousepos):
         if pet.is_clicked(mousepos):
             pet.free = False
             return
+        else:
+            pet.free = True
 
 # Clock for FPS
 clock = pygame.time.Clock()
@@ -376,10 +386,14 @@ while running:
         i.update_state()
         i.draw()
         i.action()
+        ##print(i.pack + " " + i.state)
+        
     
     pygame.display.flip()
     clock.tick(FPS)
 
 pygame.quit()
+
+
 
 
