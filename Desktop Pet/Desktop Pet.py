@@ -1,10 +1,30 @@
+import subprocess
+import sys
 
-import pygame
+def install_package(package_name):
+    print(f"Installing {package_name}...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
+    print(f"{package_name} installed!")
+
+# Check pygame
+try:
+    import pygame
+except ImportError:
+    install_package('pygame')
+    import pygame
+
+# Check pywin32
+try:
+    import win32gui
+except ImportError:
+    install_package('pywin32')
+    import win32gui
+    import win32con
+
+# Rest of imports
 import ctypes
 import threading
 import time
-import win32gui
-import win32con
 import os
 import random
 # Initialize Pygame
