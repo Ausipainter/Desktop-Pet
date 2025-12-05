@@ -72,7 +72,7 @@ top_thread = threading.Thread(target=keep_on_top, daemon=True)
 top_thread.start()
 
 petList = []
-STATES = ["walkl","walkr"]
+STATES = ["walkr","walkl","climb"]
  
 extra = os.path.join(MAINDIR,"Extra")
 splat_img = pygame.image.load(os.path.join(extra, "Splat.png"))
@@ -129,6 +129,7 @@ class Desktop_Pet():
         self.jump_state = 0
         self.original = self.sprite
         self.rot = 0
+        self.climb = False
         
         self.idle_images = []
         files = sorted(
@@ -285,6 +286,7 @@ class Desktop_Pet():
             self.targetx = None
             self.targety = None
             self.current = 0
+            self.climb = False
 
             self.vx = 0
             self.vy = 0
@@ -354,6 +356,66 @@ class Desktop_Pet():
                     self.delay_timer = 120
                     self.delay = True
                     self.current = 0
+        elif self.state == "climb":
+            if not self.climb:
+                choice = random.randint(1,2)
+
+                if choice == 1:
+                    self.climb = True
+                    self.targety = random.randint(1,HEIGHT)
+                    self.targetx = 0
+                if choice == 2:
+                    self.targety = random.randint(1,HEIGHT)
+                    self.targetx = self.wallr
+                    self.climb = True
+            else:
+                if self.x != self.targetx:
+                    if self.targetx >= self.x and self.targetx == 0:
+                        self.x = 0
+                    elif self.targetx == 0:
+                        self.x -= self.speed
+
+                    elif self.targetx <= self.x and self.targetx == self.wallr:
+                        self.x = self.wallr
+                    elif self.targetx == self.wallr:
+                        self.x  += self.speed
+
+                else:
+                    if self.y <= self.targety:
+
+                        
+                        self.y = self.targety
+                    else:
+                        self.y -= self.speed
+
+            if self.y == self.targety and self.x == self.targetx:
+                nexttarget = random.randint(1,2)
+
+                if nexttarget == 1:
+                    self.state = "none"
+                    if self.targetx == 0:
+                        self.vx = 5
+                        self.vy = -5
+                    if self.targetx == self.wallr:
+                        self.vx = -5
+                        self.vy = -5
+                    self.targetx = None
+                    self.targety = None
+                    self.climb = False
+                    self.delay_timer = 120
+                    self.delay = True
+                if nexttarget == 2:
+                    
+                   
+                    self.targety = self.targety + random.randint(100,500)
+
+                
+
+
+                
+                   
+                        
+                
                
         
             
