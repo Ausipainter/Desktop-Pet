@@ -29,8 +29,9 @@ WIDTH, HEIGHT = WINDOW.get_size()
 pygame.display.set_caption("Transparent Overlay")
 
 MAINDIR = os.path.dirname(__file__)
-SPRITEDIR = os.path.join(MAINDIR, "Sprites")
-
+ASSETSDIR = os.path.join(MAINDIR,"Assets")
+SPRITEDIR = os.path.join(ASSETSDIR, "Sprites")
+EXTRADIR = os.path.join(ASSETSDIR,"Extra")
 
 hwnd = pygame.display.get_wm_info()["window"]
 ctypes.windll.user32.SetWindowLongW(hwnd, -20, ctypes.windll.user32.GetWindowLongW(hwnd, -20) | 0x80000)
@@ -55,9 +56,9 @@ top_thread.start()
 petList = []
 STATES = ["walkr","walkl"]
 RARESTATES = ["jump","climb","talk"]
-extra = os.path.join(MAINDIR,"Extra")
-splat_img = pygame.image.load(os.path.join(extra, "Splat.png"))
-speech_img = pygame.image.load(os.path.join(extra,"Speech.png"))
+
+splat_img = pygame.image.load(os.path.join(EXTRADIR, "Splat.png"))
+speech_img = pygame.image.load(os.path.join(EXTRADIR,"Speech.png"))
 red = ((100,100,100))
 speech_img = pygame.transform.scale(speech_img,(WIDTH/15, WIDTH/15))
 font = pygame.font.SysFont(None, 50) 
