@@ -44,7 +44,7 @@ To add your own pet:
   
 
 
-<h1>🎞️ Sprite Requirements</h1>
+<h1>🎞️ Pet Requirements</h1>
 
 &emsp;Your pet’s sprite folder must contain the following structure:
   
