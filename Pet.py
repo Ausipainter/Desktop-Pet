@@ -73,7 +73,7 @@ font = pygame.font.SysFont(None, 50)
 
 def read_size_config(sprite_folder):
     config_path = os.path.join(SPRITEDIR, sprite_folder, "Configuration.txt")  # Fixed indentation
-    default_config = {"W": 100, "H": 100, "fps": 10}  
+    default_config = {"W": 100, "H": 100, "fps": 10, "speed": 1} 
     
     if not os.path.exists(config_path):
         return default_config
@@ -98,6 +98,8 @@ def read_size_config(sprite_folder):
                     config['H'] = int(value)
                 elif key == 'fps':
                     config['fps'] = int(value)
+                elif key == 'speed':
+                    config['speed'] = int(value)
         
         return config
     except Exception as e:
@@ -514,14 +516,12 @@ selected_pets = read_selected_pets()
 for sprite_folder in sprites:
     sprite_path = os.path.join(SPRITEDIR, sprite_folder)
     if os.path.isdir(sprite_path):
-        # Check if this pet is selected (or if no selection file exists, create all)
         if selected_pets is None or sprite_folder in selected_pets:
             try:
-                # Read configuration
                 config = read_size_config(sprite_folder)
                 
                 pet = Desktop_Pet(
-                    speed=1,
+                    speed=config['speed'],
                     pack_name=sprite_folder,
                     w=config['W'],
                     h=config['H'],
@@ -632,7 +632,6 @@ while running:
     
 
 pygame.quit()
-
 
 
 
