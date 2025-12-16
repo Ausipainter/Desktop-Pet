@@ -32,12 +32,16 @@ MAINDIR = os.path.dirname(__file__)
 ASSETSDIR = os.path.join(MAINDIR,"Assets")
 SPRITEDIR = os.path.join(ASSETSDIR, "Sprites")
 EXTRADIR = os.path.join(ASSETSDIR,"Extra")
+CONFIGDIR = os.path.join(ASSETSDIR,"Config")
 
+comtxt = os.path.join(CONFIGDIR,"Coms.txt")
 hwnd = pygame.display.get_wm_info()["window"]
 ctypes.windll.user32.SetWindowLongW(hwnd, -20, ctypes.windll.user32.GetWindowLongW(hwnd, -20) | 0x80000)
 transparency_color = (2, 0, 0)
 color_key = (transparency_color[2] << 16) | (transparency_color[1] << 8) | transparency_color[0]
 ctypes.windll.user32.SetLayeredWindowAttributes(hwnd, color_key, 0, 0x00000001)
+sprites = os.listdir(SPRITEDIR)
+
 print(f"Window created: {WIDTH}x{HEIGHT}")
 print(f"Window handle: {hwnd}")
 
@@ -61,30 +65,91 @@ splat_img = pygame.image.load(os.path.join(EXTRADIR, "Splat.png"))
 speech_img = pygame.image.load(os.path.join(EXTRADIR,"Speech.png"))
 red = ((100,100,100))
 speech_img = pygame.transform.scale(speech_img,(WIDTH/15, WIDTH/15))
-font = pygame.font.SysFont(None, 50) 
-class Desktop_Pet():
-    def __init__(self,speed,pack_name,count,w,h):
+font = pygame.font.SysFont(None, 50)
 
+
+
+
+
+def read_size_config(sprite_folder):
+    config_path = os.path.join(SPRITEDIR, sprite_folder, "Configuration.txt")  # Fixed indentation
+    default_config = {"W": 100, "H": 100, "fps": 10}  
+    
+    if not os.path.exists(config_path):
+        return default_config
+    
+    try:
+        with open(config_path, 'r') as f:
+            content = f.read()
+        import re
+        commands = re.findall(r';([^;]+);', content)
+        
+        config = default_config.copy()
+        for command in commands:
+            command = command.strip()
+            if '=' in command:
+                key, value = command.split('=', 1)
+                key = key.strip().lower()
+                value = value.strip()
+                
+                if key == 'w':
+                    config['W'] = int(value)
+                elif key == 'h':
+                    config['H'] = int(value)
+                elif key == 'fps':
+                    config['fps'] = int(value)
+        
+        return config
+    except Exception as e:
+        print(f"Error reading config for {sprite_folder}: {e}")
+        return default_config
+def read_selected_pets():
+
+    selected_file = comtxt
+    
+    if not os.path.exists(selected_file):
+        print("No selected pets file found. Creating all pets.")
+        return None
+    
+    try:
+        with open(selected_file, 'r') as f:
+            
+            selected_pets = [line.strip() for line in f.readlines() if line.strip()]
+        
+        if not selected_pets:
+            print("Selected pets file is empty. Creating all pets.")
+            return None
+        
+        print(f"Selected pets: {selected_pets}")
+        return selected_pets
+    except Exception as e:
+        print(f"Error reading selected pets file: {e}")
+        return None
+class Desktop_Pet():
+    def __init__(self, speed, pack_name, w, h, animation_fps=10):
+        self.name = pack_name
         self.w = w
         self.h = h
-        self.frame_counter = count
-        self.pack = os.path.join(SPRITEDIR,pack_name)
-        self.idlepack = os.path.join(self.pack,"Idle")
+        
+        # Calculate how many game frames to wait between animation frames
+        self.animation_speed = max(1, int(60 / animation_fps))  
+        self.frame_counter = 0
+        
+        self.pack = os.path.join(SPRITEDIR, pack_name)
+        self.idlepack = os.path.join(self.pack, "Idle")
         self.walkpack = os.path.join(self.pack, "Walk")
-        self.extras = os.path.join(self.pack,"Extras")
-       
-        self.img = pygame.image.load(os.path.join(self.idlepack,"1.png")).convert_alpha()
-        self.img = pygame.transform.scale(self.img,(w,h))
+        self.extras = os.path.join(self.pack, "Extras")
+        
+        self.img = pygame.image.load(os.path.join(self.idlepack, "1.png")).convert_alpha()
+        self.img = pygame.transform.scale(self.img, (w, h))
         try:
-            self.dead_img = pygame.image.load(os.path.join(self.extras,"Dead.png"))
-            self.dead_img = pygame.transform.scale(self.dead_img,(w,h))
+            self.dead_img = pygame.image.load(os.path.join(self.extras, "Dead.png"))
+            self.dead_img = pygame.transform.scale(self.dead_img, (w, h))
             self.dead = False
             self.has_dead_sprite = True
         except:
             self.has_dead_sprite = False
             self.dead = False
-            
-            
         
         self.mask = pygame.mask.from_surface(self.img)
         self.sprite = self.img
@@ -118,18 +183,18 @@ class Desktop_Pet():
         
         self.idle_images = []
         files = sorted(
-            [f for f in os.listdir(self.walkpack) if f.lower().endswith(('.png','.jpg','.jpeg'))],
-            key = lambda x: int(''.join(filter(str.isdigit, x)) or 0)
-            )
+            [f for f in os.listdir(self.walkpack) if f.lower().endswith(('.png', '.jpg', '.jpeg'))],
+            key=lambda x: int(''.join(filter(str.isdigit, x)) or 0)
+        )
         for file in files:
             img_path = os.path.join(self.walkpack, file)
             img = pygame.image.load(img_path).convert_alpha()
             self.walk_images.append(img)
             
         files = sorted(
-            [f for f in os.listdir(self.idlepack) if f.lower().endswith(('.png','.jpg','.jpeg'))],
-            key = lambda x: int(''.join(filter(str.isdigit, x)) or 0)
-            )
+            [f for f in os.listdir(self.idlepack) if f.lower().endswith(('.png', '.jpg', '.jpeg'))],
+            key=lambda x: int(''.join(filter(str.isdigit, x)) or 0)
+        )
         for file in files:
             img_path = os.path.join(self.idlepack, file)
             img = pygame.image.load(img_path).convert_alpha()
@@ -141,13 +206,10 @@ class Desktop_Pet():
         
         
     def draw(self):
-        
-
         if self.state == "none":
             if self.on_ground:
-                
                 self.frame_counter += 1
-                if self.frame_counter % 5 == 0:  
+                if self.frame_counter % self.animation_speed == 0:  # Use self.animation_speed
                     self.current = (self.current + 1) % len(self.idle_images)
                 self.sprite = self.idle_images[self.current]
             else:
@@ -155,25 +217,19 @@ class Desktop_Pet():
 
         elif self.state == "walkl" or (self.x != self.targetx and self.targetx == 0):
             self.frame_counter += 1
-            if self.frame_counter % 5 == 0:  
+            if self.frame_counter % self.animation_speed == 0:  
                 self.current = (self.current + 1) % len(self.walk_images)
             self.sprite = self.walk_images[self.current]
 
         elif self.state == "walkr" or (self.x != self.targetx and self.targetx == self.wallr):
             self.frame_counter += 1
-            if self.frame_counter % 5 == 0:  
-                self.current = (self.current + 1) % len(self.walk_images)
+            if self.frame_counter % self.animation_speed == 0:                  self.current = (self.current + 1) % len(self.walk_images)
             self.sprite = pygame.transform.flip(self.walk_images[self.current], True, False)
 
-        
-       
         if self.state == "dead":
             self.sprite = self.dead_img
 
-        self.sprite = pygame.transform.scale(self.sprite,(self.w,self.h))
-            
-            
-        
+        self.sprite = pygame.transform.scale(self.sprite, (self.w, self.h))
         WINDOW.blit(self.sprite, (self.x, self.y))
             
                 
@@ -317,7 +373,7 @@ class Desktop_Pet():
                 self.delay = True
                 self.current = 0
         elif self.state == "jump":
-            if self == cappy:
+            if self.name == "CappyBara":
                 
                 self.sprite = pygame.transform.rotate(self.sprite,90)
             if self.jump_state == 0:
@@ -428,26 +484,28 @@ class Desktop_Pet():
             return self.mask.get_at((int(local_x), int(local_y)))
         return False
    
-
-try:
-    slime = Desktop_Pet(1,"Slime",10,100,100)
-except:
-    pass
-try:
-    cappy = Desktop_Pet(1,"CappyBara", 4, 100,100)
-except:
-    pass
-try:
-    llama = Desktop_Pet(1,"LLama", 6,100,100)
-except:
-    pass
-try:
-    
-    man = Desktop_Pet(1,"Man",4,50,50)
-except:
-    pass
-
-
+selected_pets = read_selected_pets()
+for sprite_folder in sprites:
+    sprite_path = os.path.join(SPRITEDIR, sprite_folder)
+    if os.path.isdir(sprite_path):
+        # Check if this pet is selected (or if no selection file exists, create all)
+        if selected_pets is None or sprite_folder in selected_pets:
+            try:
+                # Read configuration
+                config = read_size_config(sprite_folder)
+                
+                pet = Desktop_Pet(
+                    speed=1,
+                    pack_name=sprite_folder,
+                    w=config['W'],
+                    h=config['H'],
+                    animation_fps=config['fps']
+                )
+                print(f"Created pet: {sprite_folder} (Size: {config['W']}x{config['H']}, FPS: {config['fps']})")
+            except Exception as e:
+                print(f"Failed to create pet for {sprite_folder}: {e}")
+        else:
+            print(f"Skipped pet: {sprite_folder} (not selected)")
 def check_click(mousepos):
     for pet in petList:
         if pet.is_clicked(mousepos):

@@ -24,6 +24,10 @@ import random
 MAINDIR = os.path.dirname(__file__)
 ASSETSDIR = os.path.join(MAINDIR,"Assets")
 CONFIGDIR = os.path.join(ASSETSDIR,"Config")
+comtxt = os.path.join(CONFIGDIR,"Coms.txt")
+with open(comtxt, 'w') as f:
+    pass
+
 SPRITESDIR = os.path.join(ASSETSDIR,"Sprites")
 sprites = os.listdir(SPRITESDIR)
 screen = pygame.display.set_mode((400,700))
@@ -69,6 +73,11 @@ while running:
                
                 print("opened")
                 pet_process = subprocess.Popen(['python', script_path])
+                print(sprites[selectPet])
+                with open(comtxt, 'w') as f:
+                    pass
+                with open(comtxt, "a") as f:
+                  f.write(sprites[selectPet])
             if rightArrow_rect.collidepoint(mousepos):
                 if selectPet == len(sprites) - 1:
                     
