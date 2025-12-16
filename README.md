@@ -1,8 +1,11 @@
 🐾 Desktop Pet (Pygame)
+
 A customizable desktop pet made with Pygame!
+
 You can easily add your own pets by dropping sprite files into the project—no code changes required.
 
 ✨ Features
+
 Animated desktop pets
 
 Easy sprite customization
@@ -24,8 +27,21 @@ To add your own pet:
 Create a new folder with your pet’s name.
 
 Inside that folder, add:
+
   A Sprites folder
+  
   A Configuration.txt file
+
+  A Display.png image
+
+  A Walk folder
+
+  A Idle folder 
+
+  Inside of walk and idle folders add your animation images(see animation Rules below) 
+  
+  Even if you do not have an animation for them you must have at least one image in each
+  
 
 
 🎞️ Sprite Requirements
@@ -33,9 +49,13 @@ Inside that folder, add:
   Your pet’s sprite folder must contain the following structure:
   
 PetName/Sprites/idle/1.png, 2.png....
+
 PetName/Sprites/walk/1.png, 2.png....
-Configuration.txt 
-Display.png
+
+PetName/Configuration.txt 
+
+PetName/Display.png
+
 (Display.png is used to display the pet in the selection menu)
 
 
@@ -53,18 +73,24 @@ All frames should be the same size
 ⚙️ Configuration File
 
 Each pet must include a Configuration.txt file.
+
 This file allows you to customize how your pet looks and animates.
 
 Command Format:
+
   ;cmd = value;
 
 Example:
+
   ;W = 100;
 
 
 🛠️ Available Commands:
+
   W   Sets sprite width(pixels)
+  
   H   Sets sprite height(pixels)
+  
   fps Sets animation speed (fps)
   
 
