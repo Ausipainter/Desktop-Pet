@@ -204,31 +204,57 @@ class Desktop_Pet():
         
 
         
-        
     def draw(self):
         if self.state == "none":
             if self.on_ground:
                 self.frame_counter += 1
-                if self.frame_counter % self.animation_speed == 0:  # Use self.animation_speed
-                    self.current = (self.current + 1) % len(self.idle_images)
-                self.sprite = self.idle_images[self.current]
+                if self.frame_counter % self.animation_speed == 0:
+                    # Add bounds checking here
+                    if len(self.idle_images) > 0:
+                        self.current = (self.current + 1) % len(self.idle_images)
+                        self.sprite = self.idle_images[self.current]
+                    else:
+                        self.sprite = self.img  # Fallback to default image
+                else:
+                    # Use current image if within bounds
+                    if len(self.idle_images) > 0 and self.current < len(self.idle_images):
+                        self.sprite = self.idle_images[self.current]
+                    else:
+                        self.sprite = self.img
             else:
                 self.sprite = self.img
-
+    
         elif self.state == "walkl" or (self.x != self.targetx and self.targetx == 0):
             self.frame_counter += 1
-            if self.frame_counter % self.animation_speed == 0:  
-                self.current = (self.current + 1) % len(self.walk_images)
-            self.sprite = self.walk_images[self.current]
-
+            if self.frame_counter % self.animation_speed == 0:
+                if len(self.walk_images) > 0:
+                    self.current = (self.current + 1) % len(self.walk_images)
+                    self.sprite = self.walk_images[self.current]
+                else:
+                    self.sprite = self.img
+            else:
+                if len(self.walk_images) > 0 and self.current < len(self.walk_images):
+                    self.sprite = self.walk_images[self.current]
+                else:
+                    self.sprite = self.img
+    
         elif self.state == "walkr" or (self.x != self.targetx and self.targetx == self.wallr):
             self.frame_counter += 1
-            if self.frame_counter % self.animation_speed == 0:                  self.current = (self.current + 1) % len(self.walk_images)
-            self.sprite = pygame.transform.flip(self.walk_images[self.current], True, False)
-
+            if self.frame_counter % self.animation_speed == 0:
+                if len(self.walk_images) > 0:
+                    self.current = (self.current + 1) % len(self.walk_images)
+                    self.sprite = pygame.transform.flip(self.walk_images[self.current], True, False)
+                else:
+                    self.sprite = pygame.transform.flip(self.img, True, False)
+            else:
+                if len(self.walk_images) > 0 and self.current < len(self.walk_images):
+                    self.sprite = pygame.transform.flip(self.walk_images[self.current], True, False)
+                else:
+                    self.sprite = pygame.transform.flip(self.img, True, False)
+    
         if self.state == "dead":
             self.sprite = self.dead_img
-
+    
         self.sprite = pygame.transform.scale(self.sprite, (self.w, self.h))
         WINDOW.blit(self.sprite, (self.x, self.y))
             
@@ -606,6 +632,7 @@ while running:
     
 
 pygame.quit()
+
 
 
 
