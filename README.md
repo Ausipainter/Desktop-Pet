@@ -30,7 +30,9 @@ To add your own pet:
 
 &emsp;&emsp;A Sprites folder
   
-&emsp;&emsp;A Configuration.txt file
+&emsp;&emsp;A Configuration.txt file (Optional)
+
+ &emsp;&emsp;A Speech.txt file (Optional)
 
  &emsp;&emsp;A Display.png image
 
@@ -72,7 +74,8 @@ All frames should be the same size
   
 <h1>⚙️ Configuration File</h1>
 
-&emsp;Each pet must include a Configuration.txt file.
+&emsp;You may include a Configuration.txt file if you want to change pet setings using command given below (recommended for non included pets)
+
 
 &emsp;&emsp;&emsp;This file allows you to customize how your pet looks and animates.
 
@@ -111,6 +114,21 @@ If no configuration is provided, pets will use:
 &emsp;speed: 1
 
 &emsp;action: 1
+
+<h1>⚙️ Speech File</h1>
+&emsp;You may add speech files to any pet you want
+
+&emsp;Similarly to commands any text you want your pet to "say" must be surrounded by two ;
+
+&emsp;Example:
+
+&emsp;&emsp;;Hello;
+
+&emsp;This will make the pet have a chance to say Hello. You can have as many voice lies as you want
+
+<h1>🔧 Default Settings</h1>
+
+&emsp;If no speech is provided, the pet will choose from a list of three things on what it says(Hi, Hello, Play with me)
 
 
 <h1>📚 Example Pet</h1>
