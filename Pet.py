@@ -433,8 +433,8 @@ class Desktop_Pet():
         self.state = "none"
         self.delay = True
         self.current = 0
-        self.targetx = 0
-        self.targety = 0
+        self.targetx = None
+        self.targety = None
         self.actiondelay = False
         self.delay_timer = 120
         self.climb = False
