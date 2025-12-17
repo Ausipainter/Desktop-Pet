@@ -91,9 +91,12 @@ W   Sets sprite width(pixels)
   
 H   Sets sprite height(pixels)
   
-fps Sets animation speed (fps)
+fps  Sets animation speed (fps)
   
-speed Sets pet speed
+speed  Sets pet speed
+
+action  Directly coorelates to rare actions (talking, climbing, jumping)
+
 
 <h1>🔧 Default Settings</h1>
 
@@ -107,6 +110,7 @@ If no configuration is provided, pets will use:
 
 &emsp;speed: 1
 
+&emsp;action: 1
 
 
 <h1>📚 Example Pet</h1>
