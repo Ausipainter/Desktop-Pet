@@ -63,19 +63,19 @@ RARESTATES = ["talk","jump","climb"]
 
 bomb_img = pygame.image.load(os.path.join(EXTRADIR,"Explosion.png"))
 bomb_img = pygame.transform.scale(bomb_img,(300, 300))
-                                  
+bomb_throw = pygame.image.load(os.path.join(EXTRADIR,"Bomb.png"))
+bomb_throw = pygame.transform.scale(bomb_throw,(100,100))
 splat_img = pygame.image.load(os.path.join(EXTRADIR, "Splat.png"))
 speech_img = pygame.image.load(os.path.join(EXTRADIR,"Speech.png"))
 red = ((100,100,100))
 speech_img = pygame.transform.scale(speech_img,(WIDTH/15, WIDTH/15))
 font = pygame.font.SysFont(None, 50)
+
+
 bombs = []
 
-
-    
-
 class bomb:
-    def __init__(x,y,vx,vy,timer,power):
+    def __init__(self,x,y,vx,vy,timer,power):
         self.x = x
         self.y =y 
         self.vx = vx
@@ -103,6 +103,30 @@ class bomb:
         if self.y >= HEIGHT - 100:
             self.y = HEIGHT - 100
             self.vy = 0
+def create_bomb(power, vx,vy,timer,x=None, y=None):
+  
+    if x is None:
+        x = random.randint(50, WIDTH - 50)
+    if y is None:
+        y = random.randint(0, 200)
+    
+
+    
+    return bomb(x, y, vx, vy, timer, power)
+def update_bombs():
+    bombs_to_remove = []
+    
+    for bomb in bombs:
+        if bomb.timer <= 0:
+            add_explosion(bomb.x, bomb.y, 100)
+            bombs_to_remove.append(bomb)
+        
+        bomb.timer -= 1
+        bomb.update_pos()
+        WINDOW.blit(bomb_throw, (bomb.x, bomb.y))
+    for bomb in bombs_to_remove:
+        bombs.remove(bomb)
+        
 
 
 def read_pet_lines(sprite_folder):
@@ -268,7 +292,7 @@ class Desktop_Pet():
             self.idle_images.append(img)
 
         
-        self.possible_rare.pop('talk')
+        self.possible_rare.remove('talk')
 
         
     def draw(self):
@@ -556,6 +580,7 @@ class Desktop_Pet():
 
         elif self.state == "bomb":
             explode = False
+            
             if self.actiondelay:
                 self.delay_timer -= 1
                 if self.delay_timer <= 0:
@@ -566,6 +591,23 @@ class Desktop_Pet():
                 self.actiondelay = True
                 self.delay_timer = 240
             if explode:
+
+                explodey = -random.randint(1,30)
+                    
+                explode_dir = random.randint(1,2)
+                if explode_dir == 1:
+                    explodex = -random.randint(1,20)
+                else:
+                    explodex = random.randint(1,20)
+                    
+                bombs.append(create_bomb(
+                        random.randint(1,500),
+                        explodex,
+                        explodey,
+                        random.randint(1,90),
+                        x=self.x,
+                        y=self.y
+                    ))
                 add_explosion(self.x,self.y,self.w)
                 
                 self.reset_action()
@@ -675,7 +717,7 @@ print("Window running. Press ESC to exit.")
 
 running = True
 mousex, mousey = 0, 0
-
+hacker = []
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -683,6 +725,20 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
+            if event.key == pygame.K_h:
+                hacker = []
+                hacker.append('h')
+            if event.key == pygame.K_a:
+                if hacker == ['h']:
+                    hacker = ['h','a']
+            if event.key == pygame.K_c:
+                if hacker == ['h','a']:
+                    hacker = ['h','a','c']
+            if event.key == pygame.K_k:
+                if hacker == ['h','a','c']:
+                    hacker = ['h','a','c','k']
+                
+                
     
         if event.type == pygame.MOUSEBUTTONDOWN:
             mousex, mousey = pygame.mouse.get_pos()
@@ -718,11 +774,26 @@ while running:
         i.action()
 
 
+    if hacker == ['h','a','c','k']:
+        answer = input("Enter Command")
+    
+
+
+        for pet in petList:
+            if answer in pet.possible_states or answer in pet.possible_rare:
+                pet.state = answer
+                print(f"Set {pet.name} state to {answer}")
+            else:
+                print(f"Command {answer} is not a valid command for {pet.name}")
+                
         
+            
+        
+        hacker = []
         ##print(i.pack + " " + i.state)
     draw_speech() 
     draw_splat()
-    
+    update_bombs()
     pygame.display.flip()
     clock.tick(FPS)
     
