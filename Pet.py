@@ -125,7 +125,7 @@ def read_pet_lines(sprite_folder):
 
 def read_size_config(sprite_folder):
     config_path = os.path.join(SPRITEDIR, sprite_folder, "Configuration.txt")  # Fixed indentation
-    default_config = {"W": 100, "H": 100, "fps": 10, "speed": 1, "action" : 1} 
+    default_config = {"W": 100, "H": 100, "fps": 10, "speed": 1, "action" : 1, "talk" : True} 
     
     if not os.path.exists(config_path):
         return default_config
@@ -154,6 +154,8 @@ def read_size_config(sprite_folder):
                     config['speed'] = float(value)
                 elif key == 'action':
                     config['action'] = float(value)
+                elif key == 'notalk':
+                    config['talk'] = False
         
         return config
     except Exception as e:
@@ -182,10 +184,11 @@ def read_selected_pets():
         print(f"Error reading selected pets file: {e}")
         return None
 class Desktop_Pet():
-    def __init__(self, speed, pack_name, w, h,action_chance,speech, animation_fps=10 ):
+    def __init__(self, speed, pack_name, w, h,action_chance,speech, talk, animation_fps=10 ):
         self.name = pack_name
         self.w = w
         self.h = h
+        self.talk = talk
         self.action_chance = action_chance
         self.animation_speed = max(1, int(60 / animation_fps))  
         self.frame_counter = 0
@@ -265,7 +268,7 @@ class Desktop_Pet():
             self.idle_images.append(img)
 
         
-        
+        self.possible_rare.pop('talk')
 
         
     def draw(self):
@@ -605,7 +608,8 @@ for sprite_folder in sprites:
                     h=config['H'],
                     animation_fps=config['fps'],
                     action_chance=config['action'],
-                    speech = phrase
+                    speech = phrase,
+                    talk = config['talk']
                 )
                 print(f"Created pet: {sprite_folder} (Size: {config['W']}x{config['H']}, FPS: {config['fps']})")
             except Exception as e:
